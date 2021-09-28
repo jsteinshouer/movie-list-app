@@ -1,0 +1,11 @@
+{
+    "openBrowser": false,
+    "web":{
+        "rewrites":{
+            "enable":true
+        },
+        "http":{
+            "port":3000
+        }
+    }
+}

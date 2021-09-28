@@ -1,0 +1,22 @@
+{
+	"name": "Movie App",
+	"dockerComposeFile": ["../docker-compose.yml","docker-compose.devcontainer.yml"],
+	"service": "app",
+	"workspaceFolder": "/workspace",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/zsh"
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"formulahendry.auto-close-tag",
+		"kamasamak.vscode-cfml",
+		"ortus-solutions.vscode-coldbox",
+		"ortus-solutions.vscode-testbox",
+        "dbaeumer.vscode-eslint",
+		"octref.vetur",
+		"bradlc.vscode-tailwindcss"
+	]
+}

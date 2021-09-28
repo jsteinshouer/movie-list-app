@@ -1,0 +1,18 @@
+{
+	"name": "Movie App API - CommandBox",
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "api",
+	"workspaceFolder": "/workspace",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/opt/box"
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"formulahendry.auto-close-tag",
+		"kamasamak.vscode-cfml",
+		"ortus-solutions.vscode-testbox"
+	]
+}
