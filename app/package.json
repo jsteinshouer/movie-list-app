@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "movie-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,13 +18,12 @@
   },
   "devDependencies": {
     "@vue/babel-preset-app": "^4.5.13",
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-router": "^4.5.4",
+    "@vue/cli-plugin-babel": "^4.5.13",
+    "@vue/cli-plugin-eslint": "^4.5.13",
+    "@vue/cli-plugin-router": "^4.5.13",
     "@vue/cli-service": "~4.5.0",
     "axios": "^0.18.0",
     "babel-eslint": "^10.1.0",
-    "cypress": "^8.4.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.16",
