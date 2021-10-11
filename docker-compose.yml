@@ -4,7 +4,7 @@ services:
     api:
         build: 
             context: .
-            target: dev-api
+            target: api-dev
         container_name: movie-app-api
         ports:
             - 8080:8080
@@ -45,11 +45,11 @@ services:
     app:
         build:
             context: .
-            target: dev-app
+            target: app-dev
         volumes:
         - .:/workspace:cached
         - ./app:/workspace/app
-        # - /workspace/app/node_modules
+        - /workspace/app/node_modules
         container_name: movie-app
         ports:
             - 3000:3000

@@ -1,11 +1,18 @@
 {
     "openBrowser": false,
+    "console": true,
+    "dockEnable": false,
+    "trayEnable": false,
+    "app": {
+        "cfengine": "lucee@5.3.7"
+    },
     "web":{
         "rewrites":{
             "enable":true
         },
+        "host": "0.0.0.0",
         "http":{
-            "port":3000
+            "port":8080
         }
     }
 }

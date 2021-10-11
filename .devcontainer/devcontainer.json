@@ -9,6 +9,9 @@
 		"terminal.integrated.shell.linux": "/bin/zsh"
 	},
 
+	"postCreateCommand": "cd app && npm install",
+	// "remoteUser": "node",
+
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"formulahendry.auto-close-tag",
@@ -19,4 +22,5 @@
 		"octref.vetur",
 		"bradlc.vscode-tailwindcss"
 	]
+
 }

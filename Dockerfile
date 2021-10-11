@@ -1,5 +1,8 @@
-# base-api build
-FROM openjdk:11.0.11-slim as base-api
+
+ARG COMMANDBOX_VERSION=3.4.4
+
+##  build
+FROM openjdk:11.0.11-slim as api-base
 # Update packages
 RUN apt update && apt install -y curl && rm -rf /var/lib/apt/lists/*
 # Install CommandBox
@@ -11,55 +14,88 @@ ENV APP_DIR /app
 WORKDIR $APP_DIR
 EXPOSE 8080
 
-# Dev container
-FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:14 as dev-app
+# api-dev stage
+FROM  ortussolutions/commandbox:${COMMANDBOX_VERSION} as api-dev
+COPY api/box.json ./
+COPY api/server.json ./
+COPY scripts/api-run.sh /opt/run.sh
+WORKDIR $APP_DIR
+RUN box install \
+    && box server start saveSettings=false dryrun=true startScript=bash profile=development \
+    && mv ./server-start.sh /opt/startup.sh \
+    &&  chmod +x /opt/startup.sh \
+    &&  chmod +x /opt/run.sh
+EXPOSE 8080
+CMD /opt/run.sh
+
+## Dev container
+FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:14 as app-devcontainer
 # Install dependencies for cypress
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-# RUN sudo -u node npm install -g @vue/cli @vue/cli-service-global
-WORKDIR /app
-ENV PATH /app/node_modules/.bin:$PATH
+RUN apt-get update && \
+  apt-get install --no-install-recommends -y \
+  libgtk2.0-0 \
+  libgtk-3-0 \
+  libnotify-dev \
+  libgconf-2-4 \
+  libgbm-dev \
+  libnss3 \
+  libxss1 \
+  libasound2 \
+  libxtst6 \
+  xauth \
+  xvfb \
+  # clean up
+  && rm -rf /var/lib/apt/lists/*
+
+RUN sudo -u node npm install -g npm@latest
+
+# Install global packages
+RUN sudo -u node npm install -g @vue/cli @vue/cli-service-global
+
+FROM app-devcontainer as app-dev
+WORKDIR /workspace/app
+# ENV PATH /app/node_modules/.bin:$PATH
 COPY app/package*.json ./
 RUN sudo npm install
 EXPOSE 3000
 CMD ["npm", "run", "serve"]
 
-# Used for testing
-# FROM node:14.17.3-alpine as test-app
-# WORKDIR /app
-# ENV PATH /app/node_modules/.bin:$PATH
-# COPY app/package*.json ./
-# RUN npm install
-# EXPOSE 3000
-# CMD ["npm", "run", "serve"]
+
 
 # production build stage
-FROM node:14.17.3-alpine as build-prod
-WORKDIR /app
+FROM app-devcontainer as app-prod
+WORKDIR /workspace/app
 COPY ./app .
 RUN npm install && npm run build
 
-# dev-api stage
-FROM base-api as dev-api
-COPY api/box.json ./
-COPY scripts/api-run.sh /opt/run.sh
-RUN /opt/box install \
-    && /opt/box server start cfengine=lucee@5.3.7 port=8080 saveSettings=false host=0.0.0.0 trayEnable=false openbrowser=false rewritesEnable=true console=true dryrun=true startScript=bash profile=development \
-    && mv ./server-start.sh /opt/startup.sh \
-    &&  chmod +x /opt/startup.sh \
-    &&  chmod +x /opt/run.sh
-CMD /opt/run.sh
-
 # production stage
-FROM base-api as prod
+FROM  ortussolutions/commandbox:${COMMANDBOX_VERSION} as api-workbench
+WORKDIR /app
 COPY ./api ./
 COPY scripts/api-run.sh /opt/run.sh
-RUN /opt/box install --production \
-    && /opt/box server start cfengine=lucee@5.3.7 port=8080 saveSettings=false host=0.0.0.0 trayEnable=false openbrowser=false rewritesEnable=true console=true dryrun=true startScript=bash profile=production \
+WORKDIR $APP_DIR
+RUN box install \
+    && box server start saveSettings=false dryrun=true startScript=bash profile=production \
     && mv ./server-start.sh /opt/startup.sh \
     &&  chmod +x /opt/startup.sh \
     &&  chmod +x /opt/run.sh \
-    && rm -Rf tests 
-COPY --from=build-prod /app/dist/assets /app/assets
-COPY --from=build-prod /app/dist/index.html /app/views/main/index.cfm
+    && rm -Rf tests \
+    && rm box.json \
+    && rm server.json
+
+FROM adoptopenjdk/openjdk11:debianslim-jre as prod
+
+# COPY our generated files
+COPY --from=api-workbench /app /app
+COPY --from=api-workbench /usr/local/lib/CommandBox/server/serverHome /usr/local/lib/CommandBox/server/serverHome
+
+RUN mkdir -p /usr/local/lib/CommandBox/lib
+
+COPY --from=api-workbench /usr/local/lib/CommandBox/lib/runwar-4.5.2.jar /usr/local/lib/CommandBox/lib/runwar-4.5.2.jar
+COPY --from=api-workbench /usr/local/lib/CommandBox/cfml/system/config/urlrewrite.xml /usr/local/lib/CommandBox/cfml/system/config/urlrewrite.xml
+COPY --from=api-workbench /opt/startup.sh /opt/startup.sh
+COPY --from=api-workbench /opt/run.sh /opt/run.sh
+
+COPY --from=app-prod /workspace/app/dist/assets /app/assets
+COPY --from=app-prod /workspace/app/dist/index.html /app/views/main/index.cfm
 CMD /opt/run.sh
