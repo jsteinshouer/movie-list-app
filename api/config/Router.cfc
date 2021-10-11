@@ -42,8 +42,6 @@ component {
 
 		resources( resource = "mymovies", namespace="api" );
 
-		// Conventions based routing
-		route( ":handler/:action?" ).end();
 	}
 
 }
