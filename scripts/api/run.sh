@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 
+#
 # Borrowed from mysql image build
 # usage: file_env VAR [DEFAULT]
 #    ie: file_env 'XYZ_DB_PASSWORD' 'example'
@@ -25,4 +25,4 @@ file_env 'DB_USER'
 file_env 'DB_PASSWORD'
 
 # Start CommandBox server
-bash /opt/startup.sh
+bash /usr/local/bin/startup.sh

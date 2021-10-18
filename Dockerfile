@@ -16,17 +16,17 @@ EXPOSE 8080
 
 # api-dev stage
 FROM  ortussolutions/commandbox:${COMMANDBOX_VERSION} as api-dev
+WORKDIR $APP_DIR
 COPY api/box.json ./
 COPY api/server.json ./
-COPY scripts/api-run.sh /opt/run.sh
-WORKDIR $APP_DIR
+COPY scripts/api/run.sh /usr/local/bin/run.sh
 RUN box install \
     && box server start saveSettings=false dryrun=true startScript=bash profile=development \
-    && mv ./server-start.sh /opt/startup.sh \
-    &&  chmod +x /opt/startup.sh \
-    &&  chmod +x /opt/run.sh
+    && mv ./server-start.sh /usr/local/bin/startup.sh \
+    &&  chmod +x /usr/local/bin/startup.sh \
+    &&  chmod +x /usr/local/bin/run.sh
 EXPOSE 8080
-CMD /opt/run.sh
+CMD /usr/local/bin/run.sh
 
 ## Dev container
 FROM mcr.microsoft.com/vscode/devcontainers/javascript-node:14 as app-devcontainer

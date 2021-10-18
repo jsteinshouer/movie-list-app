@@ -2,7 +2,7 @@ version: '3.5'
 services:
 
     api:
-        build: 
+        build:
             context: .
             target: api-dev
         container_name: movie-app-api
@@ -12,6 +12,8 @@ services:
             - .:/workspace:cached
             - ./api:/app
             - /app/modules
+            - /app/coldbox
+            - /app/testbox
         environment:
             - PORT=8080
             - APPNAME=${APPNAME}
@@ -26,7 +28,7 @@ services:
         secrets:
             - DB_PASSWORD
             - DB_USER
-    
+
     db:
         image: mysql:latest
         container_name: movie-app-db
@@ -55,7 +57,7 @@ services:
             - 3000:3000
         links:
             - api
-        environment: 
+        environment:
             CHOKIDAR_USEPOLLING: 'true'
 
 secrets:
