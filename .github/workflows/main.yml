@@ -27,7 +27,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup DB credentials
-        run: 
+        run: |
+          mkdir secrets
           openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD 
           openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD 
           echo "mydbuser" > ./secrets/MYSQL_USER
@@ -36,4 +37,8 @@ jobs:
         run: docker-compose -f "docker-compose.yml" up -d --build
 
       - name: Execute API tests
+<<<<<<< HEAD
         run: docker exec movie-app-api box testbox run
+=======
+        run: docker exec -it movie-app-api box testbox run
+>>>>>>> c544d3abe112106998b6bba6654bf6bad710c831
