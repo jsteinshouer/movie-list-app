@@ -1,0 +1,27 @@
+
+on: pull_request
+
+jobs:
+    test:
+      runs-on: ubuntu-latest
+      env:
+          APPNAME: "movie-list-app"
+          ENVIRONMENT: "development"
+          DB_CONNECTIONSTRING: "jdbc:mysql://movie-app-db:3306/my_movies_db?useUnicode=true&characterEncoding=UTF8&serverTimezone=America/Chicago&maxReconnects=3&useLegacyDatetimeCode=true"
+          DB_CLASS: "com.mysql.cj.jdbc.Driver"
+          DB_DRIVER: "MySQL"
+          DB_BUNDLENAME: "com.mysql.cj"
+          DB_BUNDLEVERSION: "8.0.19"
+          OMDB_API_KEY: ""
+      steps:  
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup DB credentials
+        run: openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD && openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD && echo "mydbuser" > ./secrets/MYSQL_USER
+   
+      - name: Start containers
+        run: docker-compose -f "docker-compose.yml" up -d --build
+
+      - name: Execute API tests
+        run: docker exec -it movie-app-api box testbox run
