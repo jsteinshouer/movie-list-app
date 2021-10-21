@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Setup DB credentials
-        run: 
+        run: |
           mkdir secrets
           openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD 
           openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD 
