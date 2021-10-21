@@ -36,3 +36,15 @@ docker compose up
 ### VS Code - Remote Container
 
 You can also run the application using the VS code remote container extension. 
+
+## Run the tests
+
+### Coldbox API Tests
+
+You can execute the API tests in the terminal using this command.
+
+```
+docker exec -it movie-app-api box testbox run
+```
+
+Or you can run them in the browser at http://localhost:8080/tests/runner.cfm
