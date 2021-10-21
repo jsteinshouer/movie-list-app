@@ -37,8 +37,5 @@ jobs:
         run: docker-compose -f "docker-compose.yml" up -d --build
 
       - name: Execute API tests
-<<<<<<< HEAD
         run: docker exec movie-app-api box testbox run
-=======
-        run: docker exec -it movie-app-api box testbox run
->>>>>>> c544d3abe112106998b6bba6654bf6bad710c831
+        
