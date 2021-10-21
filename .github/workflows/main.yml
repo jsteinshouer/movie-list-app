@@ -28,6 +28,7 @@ jobs:
 
       - name: Setup DB credentials
         run: 
+          mkdir secrets
           openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD 
           openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD 
           echo "mydbuser" > ./secrets/MYSQL_USER
