@@ -40,5 +40,5 @@ jobs:
         run: docker exec movie-app-api box testbox run
 
       - name: Execute Cypress e2e tests
-        run: docker exec movie-app npm run e2e
+        run: docker exec movie-app npx cypress run
         
