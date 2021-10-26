@@ -125,9 +125,12 @@ jobs:
       - name: Execute API tests
         run: |
           docker run \
-          --network ${{ job.services.movie-app-db.network }} \
+          --network --rm ${{ job.services.movie-app-db.network }} \
           foundeo/cfml-ci-tools \
           box testbox run http://movie-app:8080/tests/_run.cfm
+
+      - name: Remove container
+        run: docker rm movie-app -f
 
       # - name: Execute Cypress e2e tests
       #   run: docker exec movie-app sudo npx cypress run
