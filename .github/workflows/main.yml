@@ -31,10 +31,10 @@ jobs:
           image: mysql:latest
           # Provide the password for postgres
           env:
-              - MYSQL_ROOT_PASSWOR: ${{ secrets.DB_ROOT_PASSWORD }}
-              - MYSQL_USER: ${{ secrets.DB_USER }}
-              - MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-              - MYSQL_DATABASE: my_movies_db
+              MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+              MYSQL_USER: ${{ secrets.DB_USER }}
+              MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+              MYSQL_DATABASE: my_movies_db
           # Set health checks to wait until mysql has started
           options: >-
             --health-cmd "mysqladmin ping"
