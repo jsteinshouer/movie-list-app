@@ -81,12 +81,11 @@ jobs:
         with:
           context: .
           target: prod
-          platforms: linux/amd64
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           # don't push, only build
-          push: false
+          load: true
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
 
