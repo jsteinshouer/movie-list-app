@@ -8,7 +8,7 @@ fi;
 
 until test $CONTAINER_HEALTH = \"healthy\"; do
     echo "Waiting..." $CONTAINER_HEALTH
-    sleep 2
+    sleep 5
     CONTAINER_HEALTH=$(docker inspect --format='{{json .State.Health.Status}}' $1)
     if [ -z $CONTAINER_HEALTH ]; then
         echo "Container crashed"
@@ -16,7 +16,7 @@ until test $CONTAINER_HEALTH = \"healthy\"; do
     fi;
 	if [ $CONTAINER_HEALTH = \"unhealthy\" ]; then
         echo "Healthcheck failed"
-		echo $(docker inspect --format='{{json .State.Health}}' $1)
+		echo $(docker logs $1)
         exit 1
     fi;
 done
