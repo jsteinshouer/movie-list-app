@@ -35,12 +35,10 @@ jobs:
               MYSQL_USER: ${{ secrets.DB_USER }}
               MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
               MYSQL_DATABASE: my_movies_db
+          ports:
+            - 3306:3306
           # Set health checks to wait until mysql has started
-          options: >-
-            --health-cmd "pgrep mysqld"
-            --health-interval 10s
-            --health-timeout 5s
-            --health-retries 5
+          options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
 
       steps:
       - name: Checkout
