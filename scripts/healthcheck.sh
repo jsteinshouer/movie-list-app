@@ -16,7 +16,7 @@ until test $CONTAINER_HEALTH = \"healthy\"; do
     fi;
 	if [ $CONTAINER_HEALTH = \"unhealthy\" ]; then
         echo "Healthcheck failed"
-		echo $(docker logs $1)
+		echo $(docker logs --tail 100 $1)
         exit 1
     fi;
 done
