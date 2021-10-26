@@ -125,7 +125,8 @@ jobs:
       - name: Execute API tests
         run: |
           docker run \
-          --network --rm ${{ job.services.movie-app-db.network }} \
+          --rm \
+          --network ${{ job.services.movie-app-db.network }} \
           foundeo/cfml-ci-tools \
           box testbox run http://movie-app:8080/tests/_run.cfm
 
