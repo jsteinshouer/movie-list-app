@@ -102,7 +102,7 @@ jobs:
         run: docker container ls
 
       - name: Execute API tests
-        run: docker run foundeo/cfml-ci-tools box testbox run http://movie-app:8080/tests/_run.cfm
+        run: docker run foundeo/cfml-ci-tools box testbox run http://localhost:8080/tests/_run.cfm
 
       # - name: Execute Cypress e2e tests
       #   run: docker exec movie-app sudo npx cypress run
