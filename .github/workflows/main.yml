@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    test:
+    build-test:
       runs-on: ubuntu-latest
       env:
           APPNAME: "movie-list-app"
@@ -22,7 +22,26 @@ jobs:
           DB_BUNDLENAME: "com.mysql.cj"
           DB_BUNDLEVERSION: "8.0.19"
           OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
-          COMPOSE_DOCKER_CLI_BUILD: 1
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      services:
+        # Label used to access the service container
+        movie-app-db:
+          # Docker Hub image
+          image: mysql:latest
+          # Provide the password for postgres
+          env:
+              - MYSQL_ROOT_PASSWOR: ${{ secrets.DB_ROOT_PASSWORD }}
+              - MYSQL_USER: ${{ secrets.DB_USER }}
+              - MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+              - MYSQL_DATABASE: my_movies_db
+          # Set health checks to wait until mysql has started
+          options: >-
+            --health-cmd "mysqladmin ping"
+            --health-interval 10s
+            --health-timeout 5s
+            --health-retries 3
+
       steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,18 +62,43 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Setup DB credentials
-        run: |
-          mkdir secrets
-          openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD
-          openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD
-          echo "mydbuser" > ./secrets/MYSQL_USER
+      -
+        name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v3.4.1
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            jsteinshouer/movie-app
+          flavor: |
+            latest=false
+          tags: |
+            type=raw,value=latest
 
-      - name: Start containers
-        run: docker-compose -f "docker-compose.yml" up -d --build
+      -
+        # this will build the images, once per platform
+        name: Build image
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          target: prod
+          platforms: linux/amd64
+          builder: ${{ steps.buildx.outputs.name }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+          # don't push, only build
+          push: false
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+      - name: Install testbox
+        run: docker run foundeo/cfml-ci-tools box install testbox@4
+
+      - name: Run the application image
+        run: docker run --name movie-app -p 8080:8080 -e APPNAME=${APPNAME} -e ENVIRONMENT=${ENVIRONMENT} -e DB_CONNECTIONSTRING=${DB_CONNECTIONSTRING} -e DB_CLASS=${DB_CLASS} -e DB_BUNDLENAME=${DB_BUNDLENAME} -e DB_BUNDLEVERSION=${DB_BUNDLEVERSION} -e DB_USER_FILE=/run/secrets/DB_USER -e DB_PASSWORD_FILE=/run/secrets/DB_PASSWORD -e OMDB_API_KEY=${OMDB_API_KEY} -v $PWD/tests:/app/tests -v $PWD/testbox:/app/testbox -d jsteinshouer/movie-app
 
       - name: Execute API tests
-        run: docker exec movie-app-api box testbox run
+        run: docker run --network container:movie-app foundeo/cfml-ci-tools box testbox run http://movie-app:8080/tests/_run.cfm
 
-      - name: Execute Cypress e2e tests
-        run: docker exec movie-app sudo npx cypress run
+      # - name: Execute Cypress e2e tests
+      #   run: docker exec movie-app sudo npx cypress run
