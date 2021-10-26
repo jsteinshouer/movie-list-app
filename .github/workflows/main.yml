@@ -37,10 +37,10 @@ jobs:
               MYSQL_DATABASE: my_movies_db
           # Set health checks to wait until mysql has started
           options: >-
-            --health-cmd "mysqladmin ping"
+            --health-cmd "pgrep mysqld"
             --health-interval 10s
             --health-timeout 5s
-            --health-retries 3
+            --health-retries 5
 
       steps:
       - name: Checkout
