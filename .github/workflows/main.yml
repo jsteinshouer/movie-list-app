@@ -98,8 +98,11 @@ jobs:
       - name: Run the application image
         run: docker run --name movie-app -p 8080:8080 -e APPNAME=${APPNAME} -e ENVIRONMENT=${ENVIRONMENT} -e DB_CONNECTIONSTRING=${DB_CONNECTIONSTRING} -e DB_CLASS=${DB_CLASS} -e DB_BUNDLENAME=${DB_BUNDLENAME} -e DB_BUNDLEVERSION=${DB_BUNDLEVERSION} -e DB_USER_FILE=${DB_USER} -e DB_PASSWORD_FILE=${DB_PASSWORD} -e OMDB_API_KEY=${OMDB_API_KEY} -v $PWD/api/tests:/app/tests -v $PWD/testbox:/app/testbox -d jsteinshouer/movie-app:latest
 
+      - name: List containers
+        run: docker container ls
+
       - name: Execute API tests
-        run: docker run --network container:movie-app foundeo/cfml-ci-tools box testbox run http://movie-app:8080/tests/_run.cfm
+        run: docker run foundeo/cfml-ci-tools box testbox run http://movie-app:8080/tests/_run.cfm
 
       # - name: Execute Cypress e2e tests
       #   run: docker exec movie-app sudo npx cypress run
