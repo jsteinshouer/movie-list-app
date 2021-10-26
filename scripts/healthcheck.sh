@@ -14,8 +14,9 @@ until test $CONTAINER_HEALTH = \"healthy\"; do
         echo "Container crashed"
         exit 1
     fi;
-	if [ $CONTAINER_HEALTH == \"unhealthy\" ]; then
+	if [ $CONTAINER_HEALTH = \"unhealthy\" ]; then
         echo "Healthcheck failed"
+		echo $(docker inspect --format='{{json .State.Health}}' $1)
         exit 1
     fi;
 done
