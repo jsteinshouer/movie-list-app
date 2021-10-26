@@ -106,8 +106,8 @@ jobs:
             -e DB_CLASS=${DB_CLASS} \
             -e DB_BUNDLENAME=${DB_BUNDLENAME} \
             -e DB_BUNDLEVERSION=${DB_BUNDLEVERSION} \
-            -e DB_USER_FILE=${DB_USER} \
-            -e DB_PASSWORD_FILE=${DB_PASSWORD} \
+            -e DB_USER=${DB_USER} \
+            -e DB_PASSWORD=${DB_PASSWORD} \
             -e OMDB_API_KEY=${OMDB_API_KEY} \
             -v $PWD/api/tests:/app/tests \
             -v $PWD/testbox:/app/testbox \
