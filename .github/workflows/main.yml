@@ -119,7 +119,7 @@ jobs:
             jsteinshouer/movie-app:latest
 
       - name: Wait for application to be available
-        run: ./script/healthcheck.sh
+        run: ./scripts/healthcheck.sh
 
       - name: Execute API tests
         run: docker run foundeo/cfml-ci-tools box testbox run http://movie-app:8080/tests/_run.cfm
