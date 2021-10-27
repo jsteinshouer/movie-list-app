@@ -130,9 +130,6 @@ jobs:
           foundeo/cfml-ci-tools \
           box testbox run http://movie-app:8080/tests/_run.cfm
 
-      - name: Remove container
-        run: docker rm movie-app -f
-
       - name: Execute Cypress e2e tests
         run: docker run \
           --rm \
@@ -142,3 +139,7 @@ jobs:
           -w /e2e \
           cypress/included:8.6.0 \
           cypress run --config baseUrl=http://localhost:8080,video=false
+
+      - name: Remove container
+        run: docker rm movie-app -f
+
