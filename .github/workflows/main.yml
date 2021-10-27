@@ -138,7 +138,7 @@ jobs:
           -v $PWD/app:/e2e \
           -w /e2e \
           cypress/included:8.6.0 \
-          cypress run --config baseUrl=http://localhost:8080,video=false
+          cypress run --config baseUrl=http://movie-app:8080,video=false
 
       - name: Remove container
         run: docker rm movie-app -f
