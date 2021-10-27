@@ -133,5 +133,12 @@ jobs:
       - name: Remove container
         run: docker rm movie-app -f
 
-      # - name: Execute Cypress e2e tests
-      #   run: docker exec movie-app sudo npx cypress run
+      - name: Execute Cypress e2e tests
+        run: docker run \
+          --rm \
+          --network ${{ job.services.movie-app-db.network }}
+          -it \
+          -v $PWD/app:/e2e \
+          -w /e2e \
+          cypress/included:8.6.0 \
+          cypress run --config baseUrl=http://localhost:8080,video=false
