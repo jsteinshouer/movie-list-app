@@ -131,9 +131,10 @@ jobs:
           box testbox run http://movie-app:8080/tests/_run.cfm
 
       - name: Execute Cypress e2e tests
-        run: docker run \
+        run: |
+          docker run \
           --rm \
-          --network ${{ job.services.movie-app-db.network }}
+          --network ${{ job.services.movie-app-db.network }} \
           -it \
           -v $PWD/app:/e2e \
           -w /e2e \
