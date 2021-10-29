@@ -1,6 +1,6 @@
 <template>
   <div>
-	<div class="relative bg-white dark:bg-gray-800 p-4">
+	<div v-if="movieLoaded" class="relative bg-white dark:bg-gray-800 p-4">
 		<div class="lg:grid lg:grid-flow-row-dense lg:grid-cols-2 lg:items-center">
 			<div class="mt-6 -mx-2 md:-mx-12 relative lg:mt-0 col-start-1">
 				<img :src="movie.Poster" alt="illustration" class="poster relative mx-auto shadow-lg rounded w-auto"/>
@@ -38,7 +38,7 @@
 						</dl>
 					</div>
 				</div>
-				<button v-if="!isLoading" @click="toggleMyList()" data-cy="toggle-my-list" class="text-right flex justify-end flex-shrink-0 px-4 py-2 mt-5 text-xs font-semibold text-white bg-teal-600 rounded-sm shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-teal-200">
+				<button v-if="myMoviesLoaded" @click="toggleMyList()" data-cy="toggle-my-list" class="text-right flex justify-end flex-shrink-0 px-4 py-2 mt-5 text-xs font-semibold text-white bg-teal-600 rounded-sm shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2 focus:ring-offset-teal-200">
 					{{toggleButtonText}}
 				</button>
 			</div>
@@ -55,8 +55,9 @@ export default {
 			imdbID: this.$route.params.imdbID,
 			movie: {},
 			myMovieID: 0,
-			toggleButtonText: 'ADD TO MY LIST'
-
+			toggleButtonText: 'ADD TO MY LIST',
+			movieLoaded: false,
+			myMoviesLoaded: false
 		}
 	},
 	mounted() {
@@ -65,6 +66,7 @@ export default {
 		this.axios.get( "/api/movie/" + this.imdbID )
 			.then((response) => {
 				vm.movie = response.data.data;
+				vm.movieLoaded = true
 			})
 
 		this.axios.get( "/api/mymovies" ).then((response) => {
@@ -72,13 +74,11 @@ export default {
 			let myMovie = myList.find( (element) => element.imdbID === vm.imdbID  );
 			vm.myMovieID = (typeof myMovie === 'undefined' ) ? 0 : myMovie.id
 			this.toggleButtonText = this.onMyList ? 'REMOVE FROM MY LIST' : 'ADD TO MY LIST';
+			vm.myMoviesLoaded = true;
 		})
 
 	},
 	computed: {
-		isLoading() {
-			return this.onMyList === null && this.movie == {};
-		},
 		onMyList() {
 			return this.myMovieID > 0;
 		}
