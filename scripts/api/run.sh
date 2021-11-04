@@ -23,6 +23,7 @@ file_env() {
 ## Exand secrets to env
 file_env 'DB_USER'
 file_env 'DB_PASSWORD'
+file_env 'OMDB_API_KEY'
 
 # Start CommandBox server
 bash /usr/local/bin/startup.sh
