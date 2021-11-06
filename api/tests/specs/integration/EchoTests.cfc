@@ -70,7 +70,7 @@ component
 				var event    = execute( route = "api/echo/index" );
 				var response = event.getPrivateValue( "response" );
 				expect( response.getError() ).toBeFalse();
-				expect( response.getData() ).toBe( "Welcome to my ColdBox RESTFul Service" );
+				expect( response.getData() ).toBe( "Welcome to my movie app" );
 			} );
 
 		} );
