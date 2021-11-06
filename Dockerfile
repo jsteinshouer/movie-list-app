@@ -47,8 +47,6 @@ RUN sudo npm install
 EXPOSE 3000
 CMD ["npm", "run", "serve"]
 
-
-
 # production build stage
 FROM app-devcontainer as app-prod
 WORKDIR /workspace/app
@@ -58,9 +56,8 @@ RUN npm install && npm run build
 # build api server stage
 FROM  ortussolutions/commandbox:${COMMANDBOX_VERSION} as api-workbench
 WORKDIR /app
-COPY ./api ./
 COPY scripts/api/run.sh /usr/local/bin/run.sh
-WORKDIR $APP_DIR
+COPY ./api ./
 RUN box install \
     && box server start saveSettings=false dryrun=true startScript=bash profile=production \
     && mv ./server-start.sh /usr/local/bin/startup.sh \
@@ -70,19 +67,21 @@ RUN box install \
 # Production build
 FROM adoptopenjdk/openjdk11:debianslim-jre-nightly as prod
 
-COPY --from=api-workbench /app /app
 COPY --from=api-workbench /usr/local/lib/CommandBox/server/serverHome /usr/local/lib/CommandBox/server/serverHome
 
-RUN mkdir -p /usr/local/lib/CommandBox/lib \
-	&& rm -Rf /app/tests \
-    && rm -Rf /app/testbox \
-    && rm /app/box.json \
-    && rm /app/server.json
+RUN mkdir -p /usr/local/lib/CommandBox/lib
 
 COPY --from=api-workbench /usr/local/lib/CommandBox/lib/runwar-4.5.2.jar /usr/local/lib/CommandBox/lib/runwar-4.5.2.jar
 COPY --from=api-workbench /usr/local/lib/CommandBox/cfml/system/config/urlrewrite.xml /usr/local/lib/CommandBox/cfml/system/config/urlrewrite.xml
 COPY --from=api-workbench /usr/local/bin/startup.sh /usr/local/bin/startup.sh
 COPY --from=api-workbench /usr/local/bin/run.sh /usr/local/bin/run.sh
+
+COPY --from=api-workbench /app /app
+
+RUN rm -Rf /app/tests \
+    && rm -Rf /app/testbox \
+    && rm /app/box.json \
+    && rm /app/server.json
 
 COPY --from=app-prod /workspace/app/dist/assets /app/assets
 COPY --from=app-prod /workspace/app/dist/index.html /app/views/main/index.cfm
