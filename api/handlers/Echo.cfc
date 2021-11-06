@@ -21,7 +21,7 @@ component extends="coldbox.system.RestHandler" {
 	 * @response-default ~echo/index/responses.json##200
 	 */
 	function index( event, rc, prc ) {
-		event.getResponse().setData( "Welcome to my movie app" );
+		event.getResponse().setData( "Welcome to the Movie App" );
 	}
 
 }
