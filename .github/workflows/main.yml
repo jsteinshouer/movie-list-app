@@ -193,4 +193,4 @@ jobs:
             SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
 
         - name: Trigger a service update
-          run: ssh staging 'docker service update --force movie-app'
+          run: ssh prod 'docker service update --force movie-app'
