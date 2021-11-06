@@ -173,7 +173,7 @@ jobs:
       name: "Deploy"
       runs-on: ubuntu-latest
       if: github.event_name == 'push'
-      needs: test
+      needs: builds-test
       steps:
         - name: Configure SSH
           run: |
