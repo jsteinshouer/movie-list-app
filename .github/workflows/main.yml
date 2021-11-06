@@ -61,9 +61,9 @@ jobs:
         uses: actions/cache@v2.1.6
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            ${{ runner.os }}-build-
 
       -
         name: Docker meta
