@@ -104,9 +104,6 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      - name: List images
-        run: docker image ls
-
       - name: Install testbox
         run: docker run -v $PWD/api/testbox:/app/testbox foundeo/cfml-ci-tools box install testbox@4
 
