@@ -80,7 +80,7 @@ jobs:
 
       -
         # this will build the images, once per platform
-        name: Build image
+        name: Build image for test
         id: docker_build
         uses: docker/build-push-action@v2
         with:
@@ -99,7 +99,7 @@ jobs:
         # Temp fix
         # https://github.com/docker/build-push-action/issues/252
         # https://github.com/moby/buildkit/issues/1896
-      - name: Move cache - Build and push
+      - name: Move cache - Build for test
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
