@@ -71,7 +71,7 @@ RUN box install \
     &&  chmod +x /usr/local/bin/run.sh
 
 # Production build
-FROM adoptopenjdk/openjdk11:ubuntu-jre as prod
+FROM adoptopenjdk/openjdk11:debianslim-jre as prod
 
 COPY --from=api-workbench /app /app
 COPY --from=api-workbench /usr/local/lib/CommandBox/server/serverHome /usr/local/lib/CommandBox/server/serverHome
