@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 #
 # Borrowed from mysql image build

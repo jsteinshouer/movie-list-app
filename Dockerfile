@@ -50,8 +50,11 @@ CMD ["npm", "run", "serve"]
 
 
 # production build stage
-FROM app-devcontainer as app-prod
-WORKDIR /workspace/app
+FROM node:14.18.0-alpine as app-prod
+RUN npm install -g npm@latest
+#RUN npm install -g @vue/cli @vue/cli-service-global
+ENV PATH /app/node_modules/.bin:$PATH
+WORKDIR /app
 COPY ./app .
 RUN npm install && npm run build
 
@@ -68,7 +71,7 @@ RUN box install \
     &&  chmod +x /usr/local/bin/run.sh
 
 # Production build
-FROM adoptopenjdk/openjdk11:debianslim-jre-nightly as prod
+FROM adoptopenjdk/openjdk11:ubuntu-jre as prod
 
 COPY --from=api-workbench /app /app
 COPY --from=api-workbench /usr/local/lib/CommandBox/server/serverHome /usr/local/lib/CommandBox/server/serverHome
@@ -84,6 +87,9 @@ COPY --from=api-workbench /usr/local/lib/CommandBox/cfml/system/config/urlrewrit
 COPY --from=api-workbench /usr/local/bin/startup.sh /usr/local/bin/startup.sh
 COPY --from=api-workbench /usr/local/bin/run.sh /usr/local/bin/run.sh
 
-COPY --from=app-prod /workspace/app/dist/assets /app/assets
-COPY --from=app-prod /workspace/app/dist/index.html /app/views/main/index.cfm
-CMD /usr/local/bin/run.sh
+RUN chmod +x /usr/local/bin/startup.sh \
+    &&  chmod +x /usr/local/bin/run.sh
+
+COPY --from=app-prod /app/dist/assets /app/assets
+COPY --from=app-prod /app/dist/index.html /app/views/main/index.cfm
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/run.sh"]
