@@ -1,0 +1,50 @@
+version: '3.5'
+services:
+
+    app:
+        build:
+            context: .
+            target: prod
+        #container_name: movie-app-test
+        ports:
+            - 8080:8080
+        environment:
+            - PORT=8080
+            - APPNAME=${APPNAME}
+            - ENVIRONMENT=${ENVIRONMENT}
+            - DB_CONNECTIONSTRING=${DB_CONNECTIONSTRING}
+            - DB_CLASS=${DB_CLASS}
+            - DB_BUNDLENAME=${DB_BUNDLENAME}
+            - DB_BUNDLEVERSION=${DB_BUNDLEVERSION}
+            - DB_USER_FILE=/run/secrets/DB_USER
+            - DB_PASSWORD_FILE=/run/secrets/DB_PASSWORD
+            - OMDB_API_KEY_FILE=/run/secrets/OMDB_API_KEY
+        secrets:
+            - DB_PASSWORD
+            - DB_USER
+            - OMDB_API_KEY
+
+    db:
+        image: mysql:latest
+        container_name: movie-app-db
+        ports:
+            - 3306:3306
+        environment:
+            - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/DB_ROOT_PASSWORD
+            - MYSQL_USER_FILE=/run/secrets/DB_USER
+            - MYSQL_PASSWORD_FILE=/run/secrets/DB_PASSWORD
+            - MYSQL_DATABASE=my_movies_db
+        secrets:
+            - DB_PASSWORD
+            - DB_USER
+            - DB_ROOT_PASSWORD
+
+secrets:
+  DB_USER:
+    file: ./secrets/MYSQL_USER
+  DB_PASSWORD:
+    file: ./secrets/MYSQL_PASSWORD
+  DB_ROOT_PASSWORD:
+    file: ./secrets/MYSQL_ROOT_PASSWORD
+  OMDB_API_KEY:
+    file: ./secrets/OMDB_API_KEY
