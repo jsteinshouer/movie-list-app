@@ -89,4 +89,4 @@ COPY --from=api-workbench /usr/local/bin/run.sh /usr/local/bin/run.sh
 
 COPY --from=app-prod /app/dist/assets /app/assets
 COPY --from=app-prod /app/dist/index.html /app/views/main/index.cfm
-ENTRYPOINT ["/bin/bash", "/usr/local/bin/run.sh"]
+CMD /usr/local/bin/run.sh
