@@ -48,6 +48,7 @@ services:
         build:
             context: .
             target: app-dev
+        container_name: movie-app
         volumes:
         - .:/workspace:cached
         - ./app:/workspace/app
