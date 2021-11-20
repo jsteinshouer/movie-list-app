@@ -20,6 +20,14 @@ component {
 	// COLDBOX APPLICATION KEY OVERRIDE
 	COLDBOX_APP_KEY       = "";
 
+	this.javaSettings = { 
+		loadPaths = [ 
+			"lib", 
+			"lib\nbvcxz"
+		], 
+		reloadOnChange = false 
+	};
+
 	this.mappings[ "/quick" ] = COLDBOX_APP_ROOT_PATH & "/modules/quick";
 
 	

@@ -27,6 +27,12 @@ component {
 				GET: "index" 
 			})
 			.toHandler("Echo");
+		route( "/signup")
+			.withNamespace("api")
+			.withAction({
+				POST: "index" 
+			})
+			.toHandler("Signup");
 		route( "/movie/:imdbID")
 			.withNamespace("api")
 			.withAction({
