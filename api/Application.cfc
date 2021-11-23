@@ -29,6 +29,7 @@ component {
 	};
 
 	this.mappings[ "/quick" ] = COLDBOX_APP_ROOT_PATH & "/modules/quick";
+	this.mappings[ "/lib" ] = COLDBOX_APP_ROOT_PATH & "/lib";
 
 	
 	this.datasources["MyMovies"] = {

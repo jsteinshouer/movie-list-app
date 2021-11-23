@@ -33,6 +33,12 @@ component {
 				POST: "index" 
 			})
 			.toHandler("Signup");
+		route( "/authorize")
+			.withNamespace("api")
+			.withAction({
+				POST: "index" 
+			})
+			.toHandler("Authorize")
 		route( "/movie/:imdbID")
 			.withNamespace("api")
 			.withAction({

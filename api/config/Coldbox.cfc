@@ -59,7 +59,11 @@
 		 * --------------------------------------------------------------------------
 		 */
 		settings = {
-			OMDB_API_KEY = getSystemSetting("OMDB_API_KEY")
+			OMDB_API_KEY = getSystemSetting("OMDB_API_KEY"),
+			JWT_SECRET = getSystemSetting("JWT_SECRET"),
+			JWT_ISSUER = getSystemSetting("JWT_ISSUER"),
+			JWT_EXP_MIN = getSystemSetting("JWT_EXP_MIN"),
+			AUTH_COOKIE_NAME = getSystemSetting("AUTH_COOKIE_NAME")
 		};
 
 		/**
@@ -123,7 +127,12 @@
 		 * --------------------------------------------------------------------------
 		 * Remember that the order of declaration is the order they will be registered and fired
 		 */
-		interceptors = [];
+		interceptors = [ 
+			{
+				class="interceptors.Security",
+				properties={}
+			}
+		];
 
 		/**
 		 * --------------------------------------------------------------------------

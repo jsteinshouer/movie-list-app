@@ -1,7 +1,7 @@
 /**
  * My RESTFul Event Handler
  */
-component extends="coldbox.system.RestHandler" {
+component extends="coldbox.system.RestHandler" secured="true" {
 
 	// OPTIONAL HANDLER PROPERTIES
 	this.prehandler_only      = "";

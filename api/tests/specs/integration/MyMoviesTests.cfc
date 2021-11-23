@@ -21,7 +21,15 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 	function beforeAll(){
 		super.beforeAll();
 		// do your own stuff here
-		//getInstance( "MigrationService@cfmigrations" ).runAllMigrations( "up" );
+		util = new coldbox.system.core.util.Util();
+		jwt = new lib.jwt.JWT( key = util.getSystemSetting("JWT_SECRET"), issuer = util.getSystemSetting("JWT_ISSUER") );
+		var authTokenPayload = {
+			"iss" = util.getSystemSetting("JWT_ISSUER"),
+			"exp" = dateAdd( "n", util.getSystemSetting("JWT_EXP_MIN"), now() ).getTime(),
+			"sub" = "user@example.com"
+		};
+		mockAuthToken = jwt.encode( authTokenPayload );
+
 	}
 
 	function afterAll(){
@@ -38,11 +46,24 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 			beforeEach(function( currentSpec ){
 				// Setup as a new ColdBox request, VERY IMPORTANT. ELSE EVERYTHING LOOKS LIKE THE SAME REQUEST.
 				setup();
+				// getInstance( "User" ).deleteALL();
 			});
 
 			aroundEach( function( spec, suite ){
 
+				//Create mock auth cookie
+				cookie[ util.getSystemSetting( "AUTH_COOKIE_NAME" ) ] = mockAuthToken;
+
 				transaction {
+					testUser = getInstance( "User" ).create( {
+						"email": "user@example.com",
+						"password": "d*H%frQ^plG"
+					});
+
+					testUser2 = getInstance( "User" ).create( {
+						"email": "user2@somedomain.com",
+						"password": "d*H%frQ^plG"
+					});
 
 					// execute the spec
 			     	arguments.spec.body();
@@ -50,21 +71,26 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 			     	transaction action="rollback";
 				}
 
+				structDelete( cookie, util.getSystemSetting( "AUTH_COOKIE_NAME" ), false );
+				// to prevent the cookie from being sent to the browser
+				getPageContext().getResponse().reset();
+
 			} );
 
 			describe( "GET /mymovies/:id", function(){
 
 				it( "should get something from your movie list", function(){
 
-					var movie = getInstance( "Movie" ).create( {
+					var movie = testUser.movies().create( {
 						"title": "Drop Dead Fred",
 						"poster": "https://m.media-amazon.com/images/M/MV5BMDNkZWIzZjktYWNkMi00MTQ2LWIyMTgtMmJhOGRiZDZlNmU4XkEyXkFqcGdeQXVyNTUyMzE4Mzg@._V1_SX300.jpg",
 						"imdbID": "tt0101775"
 					});
 
+					// testUser.movies().save( movie );
+
 					var event = get( route = "/api/mymovies/" & movie.getID()  );
 
-					
 					var response 	= event.getPrivateValue( "response" );
 					expect(	response.getStatusCode() ).toBe( 200 );
 					expect(	response.getData().id ).toBe( movie.getID() );
@@ -80,23 +106,27 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 
 				it( "should list existing items on the movie list", function(){
 
-					var myMovieList = getInstance( "Movie" );
-
-					var movieListCount = myMovieList.all().len();
-					myMovieList.create( {
+					var movieListCount =  testUser.getMovies().len();
+					 testUser.movies().create( {
 						"title": "Test 1",
 						"poster": "",
 						"imdbID": "1234"
 					});
-					myMovieList.create( {
+					 testUser.movies().create( {
 						"title": "Test 2",
 						"poster": "",
 						"imdbID": "4567"
 					});
+					testUser2.movies().create( {
+						"title": "Should not be listed",
+						"poster": "",
+						"imdbID": "3333"
+					});					
 
 					var event = get( route = "/api/mymovies" );
 
-					var response 	= event.getPrivateValue( "response" );
+					var response 	= event.getPrivateValue( "response" );		
+					
 					expect(	response.getStatusCode() ).toBe( 200 );
 					expect(	response.getData().len() ).toBe( movieListCount + 2 );
 					expect(	response.getData()[movieListCount + 1].imdbID ).toBe( "1234" );
@@ -124,6 +154,7 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 					expect(	response.getData().id ).toBeGT( 0 );
 					expect(	response.getData().title ).toBe( "Drop Dead Fred" );
 					expect(	response.getData().imdbID ).toBe( "tt0101775" );
+					expect(	response.getData().userID ).toBe( testUser.getID() );
 				});
 
 			});
@@ -132,7 +163,7 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 
 				it( "should update an existing item on the to watch list", function(){
 					
-					var movieListItem = getInstance( "Movie" ).create( {
+					var movieListItem = testUser.movies().create( {
 						"title": "Test 1",
 						"poster": "/test/path/poster.jpg",
 						"imdbID": "1234"
@@ -154,6 +185,32 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 					expect(	response.getData().poster ).toBe( "/test/path/poster2.jpg" );
 				});
 
+				it( "should not update an existing item on the to watch list of another user", function(){
+					
+					var movieListItem = testUser2.movies().create( {
+						"title": "Test 1",
+						"poster": "/test/path/poster.jpg",
+						"imdbID": "1234"
+					});
+
+					var event = put(
+						route = "/api/mymovies/#movieListItem.getID()#",
+						params = {
+							title = "My new title",
+							poster = "/test/path/poster2.jpg",
+							imdbID = "1234"
+						}
+					);
+
+					var movie = getInstance("Movie").findOrFail( movieListItem.getID() );
+
+					var response 	= event.getPrivateValue( "response" );
+					expect(	response.getStatusCode() ).toBe( 404 );
+					
+					expect(	movie.getTitle() ).toBe( "Test 1");
+					
+				});
+
 			});
 
 
@@ -161,7 +218,7 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 
 				it( "should delete an item from the to watch list", function(){
 
-					var movielistItem = getInstance( "Movie" ).create( {
+					var movielistItem = testUser.movies().create( {
 						"title": " Drop dead Fred",
 						"poster": "https://m.media-amazon.com/images/M/MV5BMDNkZWIzZjktYWNkMi00MTQ2LWIyMTgtMmJhOGRiZDZlNmU4XkEyXkFqcGdeQXVyNTUyMzE4Mzg@._V1_SX300.jpg",
 						"imdbID": "tt0101775"
@@ -175,6 +232,24 @@ component extends="coldbox.system.testing.BaseTestCase" appMapping="/root"{
 
 					expect(	response.getStatusCode() ).toBe( 200 );
 					expect(	getInstance( "Movie" ).find( movielistItem.getID() ) ).toBeNull();
+				});
+
+				it( "should not allow me to delete an item from another user's watch list", function(){
+
+					var movielistItem = testUser2.movies().create( {
+						"title": " Drop dead Fred",
+						"poster": "https://m.media-amazon.com/images/M/MV5BMDNkZWIzZjktYWNkMi00MTQ2LWIyMTgtMmJhOGRiZDZlNmU4XkEyXkFqcGdeQXVyNTUyMzE4Mzg@._V1_SX300.jpg",
+						"imdbID": "tt0101775"
+					});
+
+					var event = delete(
+						route = "/api/mymovies/#movielistItem.getID()#"
+					);
+
+					var response 	= event.getPrivateValue( "response" );					
+
+					expect(	response.getStatusCode() ).toBe( 404 );
+					expect(	getInstance( "Movie" ).find( movielistItem.getID() ) ).notToBeNull();
 				});
 
 			});

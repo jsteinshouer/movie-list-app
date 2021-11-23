@@ -111,6 +111,10 @@ jobs:
             -e DB_USER=${DB_USER} \
             -e DB_PASSWORD=${DB_PASSWORD} \
             -e OMDB_API_KEY=${OMDB_API_KEY} \
+            -e JWT_SECRET=${JWT_SECRET} \
+            -e JWT_ISSUER=${JWT_ISSUER} \
+            -e JWT_EXP_MIN=${JWT_EXP_MIN} \
+            -e AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME} \
             -v $PWD/api/tests:/app/tests \
             -v $PWD/api/testbox:/app/testbox \
             --health-cmd "curl -f http://localhost:8080/healthcheck || exit 1" \
