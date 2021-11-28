@@ -27,6 +27,12 @@ component {
 				GET: "index" 
 			})
 			.toHandler("Echo");
+		route( "/whoami")
+			.withNamespace("api")
+			.withAction({
+				GET: "index" 
+			})
+			.toHandler("WhoAmI");
 		route( "/signup")
 			.withNamespace("api")
 			.withAction({
