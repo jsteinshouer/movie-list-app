@@ -54,9 +54,10 @@ component singleton {
 	 * Check user credentials
 	 */
 	public void function issueAuthCookie( required string username ) {
+		//expiration https://trycf.com/scratch-pad/gist/349e457bd8fa4a8b77560051ed49a447
 		var authTokenPayload = {
 			"iss" = JWT_ISSUER,
-			"exp" = dateAdd( "n", JWT_EXP_MIN, now() ).getTime(),
+			"exp" = int( dateAdd( "n", JWT_EXP_MIN, now() ).getTime() / 1000 ),
 			"sub" = arguments.username
 		};
 		var authToken = jwt.encode( authTokenPayload );
