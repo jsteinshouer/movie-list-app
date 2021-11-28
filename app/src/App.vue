@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-    <!-- <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div> -->
     <NavBar />
     <div class="mt-6 ml-8">
     <router-view/>
@@ -16,7 +12,7 @@ import NavBar from '@/components/NavBar';
 export default {
     components: {
       NavBar
-    },
+    }
 }
 </script>
 
