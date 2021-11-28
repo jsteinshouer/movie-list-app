@@ -55,16 +55,16 @@ services:
             target: app-dev
         container_name: movie-app
         volumes:
-        - .:/workspace:cached
-        - ./app:/workspace/app
-        - /workspace/app/node_modules
-        container_name: movie-app
+            - .:/workspace:cached
+            - ./app:/workspace/app
+            - /workspace/app/node_modules
         ports:
             - 3000:3000
         links:
             - api
         environment:
-            CHOKIDAR_USEPOLLING: 'true'
+            - CHOKIDAR_USEPOLLING='true'
+            - CYPRESS_AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME}
 
 secrets:
   DB_USER:
