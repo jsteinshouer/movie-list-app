@@ -19,11 +19,16 @@ services:
             - DB_USER_FILE=/run/secrets/DB_USER
             - DB_PASSWORD_FILE=/run/secrets/DB_PASSWORD
             - OMDB_API_KEY_FILE=/run/secrets/OMDB_API_KEY
+            - JWT_SECRET_FILE=/run/secrets/JWT_SECRET
+            - JWT_ISSUER=${JWT_ISSUER}
+            - JWT_EXP_MIN=${JWT_EXP_MIN}
+            - AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME}
         secrets:
             - DB_PASSWORD
             - DB_USER
             - OMDB_API_KEY
-
+            - JWT_SECRET
+            
     db:
         image: mysql:latest
         container_name: movie-app-db
@@ -48,3 +53,5 @@ secrets:
     file: ./secrets/MYSQL_ROOT_PASSWORD
   OMDB_API_KEY:
     file: ./secrets/OMDB_API_KEY
+  JWT_SECRET:
+    file: ./secrets/JWT_SECRET
