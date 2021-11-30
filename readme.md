@@ -10,6 +10,7 @@ For development generate the secrets that docker-compose will use to to pass dat
 mkdir secrets
 openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD
 openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD
+openssl rand 32 | base64 -w 0 | docker secret create JWT_SECRET -
 echo "mydbuser" > ./secrets/MYSQL_USER
 ```
 
@@ -48,3 +49,15 @@ docker exec -it movie-app-api box testbox run
 ```
 
 Or you can run them in the browser at http://localhost:8080/tests/runner.cfm
+
+### Cypress front-end / end-to-end tests
+
+```
+docker exec -it movie-app /app/node_modules/.bin/cypress run 
+```
+
+### Test the production build
+
+```
+docker compose -f docker-compose.test.yml up --build
+```
