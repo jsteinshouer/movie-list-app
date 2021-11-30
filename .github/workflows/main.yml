@@ -97,9 +97,6 @@ jobs:
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
 
-      - name: Install testbox
-        run: docker run -v $PWD/api/testbox:/app/testbox foundeo/cfml-ci-tools box install testbox@4
-
       - name: Run the application image
         run: |
           docker run \
@@ -120,7 +117,6 @@ jobs:
             -e JWT_EXP_MIN=${JWT_EXP_MIN} \
             -e AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME} \
             -v $PWD/api/tests:/app/tests \
-            -v $PWD/api/testbox:/app/testbox \
             --health-cmd "curl -f http://localhost:8080/healthcheck || exit 1" \
             --health-interval 10s \
             --health-timeout 5s \
@@ -130,6 +126,9 @@ jobs:
 
       - name: Wait for application to be available
         run: sh ./scripts/healthcheck.sh movie-app
+
+      - name: Install testbox
+        run: docker exec movie-app cd /app & box install testbox@4
 
       - name: Execute API tests
         run: |
@@ -182,6 +181,7 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+  
     deploy:
       name: "Deploy"
       runs-on: ubuntu-latest
