@@ -17,7 +17,8 @@ component singleton="true" {
 	*/
 	PasswordStrengthEstimator function init(){
 
-		variables.nbvcxz = createObject( "java", "me.gosimple.nbvcxz.Nbvcxz" ).init();
+
+		variables.nbvcxz = createObject( "java", "me.gosimple.nbvcxz.Nbvcxz", expandPath("/lib/nbvcxz/nbvcxz-1.5.0.jar") ).init();
 
 		return this;
 	}
