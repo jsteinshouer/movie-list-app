@@ -2,6 +2,8 @@
 
 import Vue from 'vue';
 import axios from "axios";
+import router from '../router';
+import store from '../store';
 
 // Full config:  https://github.com/axios/axios#request-config
 // axios.defaults.baseURL = process.env.baseURL || process.env.apiUrl || '';
@@ -35,6 +37,11 @@ _axios.interceptors.response.use(
   },
   function(error) {
     // Do something with response error
+    console.log( error.request );
+    if ( error.request.url != '/api/whoami' && error.request.url != '/api/authorize' && error.response.status === 401 ) {
+      store.isLoggedIn = false;
+      router.push( "/login" ).catch(err => { console.log(err) });
+    }
     return Promise.reject(error);
   }
 );

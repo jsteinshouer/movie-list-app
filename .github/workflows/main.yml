@@ -24,6 +24,10 @@ jobs:
           OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ISSUER: MyMovieAppTest
+          JWT_EXP_MIN: 10
+          AUTH_COOKIE_NAME: test_auth_cookie
       services:
         # Label used to access the service container
         movie-app-db:
@@ -72,7 +76,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            jsteinshouer/movie-app
+            ${{ secrets.DOCKERHUB_IMAGE }}
           flavor: |
             latest=false
           tags: |
@@ -111,6 +115,10 @@ jobs:
             -e DB_USER=${DB_USER} \
             -e DB_PASSWORD=${DB_PASSWORD} \
             -e OMDB_API_KEY=${OMDB_API_KEY} \
+            -e JWT_SECRET=${JWT_SECRET} \
+            -e JWT_ISSUER=${JWT_ISSUER} \
+            -e JWT_EXP_MIN=${JWT_EXP_MIN} \
+            -e AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME} \
             -v $PWD/api/tests:/app/tests \
             -v $PWD/api/testbox:/app/testbox \
             --health-cmd "curl -f http://localhost:8080/healthcheck || exit 1" \
@@ -118,7 +126,7 @@ jobs:
             --health-timeout 5s \
             --health-retries 5 \
             -d \
-            jsteinshouer/movie-app:latest
+            ${{ secrets.DOCKERHUB_IMAGE }}:latest
 
       - name: Wait for application to be available
         run: sh ./scripts/healthcheck.sh movie-app
@@ -139,7 +147,7 @@ jobs:
           -v $PWD/app:/e2e \
           -w /e2e \
           cypress/included:8.6.0 \
-          cypress run --config baseUrl=http://movie-app:8080,video=false
+          cypress run --config baseUrl=http://movie-app:8080,video=false --env AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME}
 
       - name: Remove container
         run: docker rm movie-app -f
@@ -174,6 +182,7 @@ jobs:
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+  
     deploy:
       name: "Deploy"
       runs-on: ubuntu-latest
@@ -198,4 +207,4 @@ jobs:
             SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
 
         - name: Trigger a service update
-          run: ssh prod 'docker service update --image jsteinshouer/movie-app movie-app'
+          run: ssh prod 'docker service update --image ${{ secrets.DOCKERHUB_IMAGE }} movie-app'

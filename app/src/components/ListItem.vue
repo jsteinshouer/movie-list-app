@@ -25,7 +25,6 @@ export default {
 	props: ['movie'],
 	methods: {
 		viewMovie( imdbID ) {
-			console.log(imdbID)
 			this.$router.push( { name: "ViewMovie", params: {imdbID: imdbID} });
 		}
 	}

@@ -1,13 +1,24 @@
 /**
  * My RESTFul Event Handler
  */
-component extends="coldbox.system.RestHandler" {
+component extends="coldbox.system.RestHandler" secured="true" {
+
+
+
+    /**
+	* Runs before each action
+	*/
+	any function preHandler( event, rc, prc ){
+		prc.user = getInstance("User")
+			.where( "email", prc.authorizedUsername )
+			.firstOrFail();
+	}
 
     /**
 	* Index
 	*/
 	any function index( event, rc, prc ){
-		prc.response.setData( getInstance( "Movie" ).asMemento().all() );
+		prc.response.setData( prc.user.getMovies().map( (i) => { return i.getMemento(); }) );
 	}
 
 
@@ -27,7 +38,7 @@ component extends="coldbox.system.RestHandler" {
 	*/
 	any function create( event, rc, prc ){
 
-		var movie = getInstance( "Movie" ).create( {
+		var movie = prc.user.movies().create( {
 			"title": rc.title,
 			"poster": rc.poster,
             "imdbID": rc.imdbID
@@ -42,7 +53,7 @@ component extends="coldbox.system.RestHandler" {
 	*/
 	any function update( event, rc, prc ){
 
-		var movie = getInstance( "Movie" )
+		var movie =prc.user.movies()
 			.findOrFail( rc.id )
 			.update( {
 				"title": rc.title,
@@ -59,7 +70,7 @@ component extends="coldbox.system.RestHandler" {
 	*/
 	any function delete( event, rc, prc ){
 
-		getInstance( "Movie" )
+		prc.user.movies()
 			.findOrFail( rc.id )
 			.delete();
 

@@ -24,6 +24,14 @@ component
 	function beforeAll() {
 		super.beforeAll();
 		// do your own stuff here
+		util = new coldbox.system.core.util.Util();
+		jwt = new lib.jwt.JWT( key = util.getSystemSetting("JWT_SECRET"), issuer = util.getSystemSetting("JWT_ISSUER") );
+		var authTokenPayload = {
+			"iss" = util.getSystemSetting("JWT_ISSUER"),
+			"exp" = dateAdd( "n", util.getSystemSetting("JWT_EXP_MIN"), now() ).getTime(),
+			"sub" = "user@example.com"
+		};
+		mockAuthToken = jwt.encode( authTokenPayload );
 	}
 
 	function afterAll() {
@@ -38,6 +46,14 @@ component
 			beforeEach( function( currentSpec ) {
 				// Setup as a new ColdBox request, VERY IMPORTANT. ELSE EVERYTHING LOOKS LIKE THE SAME REQUEST.
 				setup();
+				//Create mock auth cookie
+				cookie[ util.getSystemSetting( "AUTH_COOKIE_NAME" ) ] = mockAuthToken
+			} );
+			
+			afterEach( function( currentSpec ) {
+				structDelete( cookie, util.getSystemSetting( "AUTH_COOKIE_NAME" ), false );
+				// to prevent the cookie from being sent to the browser
+				getPageContext().getResponse().reset();
 			} );
 
 			it( "can handle invalid HTTP Calls", function() {

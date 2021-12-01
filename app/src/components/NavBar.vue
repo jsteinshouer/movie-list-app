@@ -45,24 +45,30 @@
       </div>
     </div>
     <nav :class="isOpen ? 'block' : 'hidden'" class="px-2 pt-2 pb-4 sm:flex sm:p-0">
-      <a href="/search" class="block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800" :class="{'bg-teal-800': (activeRoute == 'Search')}">Search</a>
-      <a href="#" class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800 sm:mt-0 sm:ml-2">My Watch List</a>
-      <a href="#" class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800 sm:mt-0 sm:ml-2">Watched Movies</a>
+      <router-link v-if="!isLoggedIn" to="/login" class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800 sm:mt-0 sm:ml-2" :class="{'bg-teal-800': (activeRoute == 'Login')}">Login</router-link>
+      <router-link v-if="!isLoggedIn" to="/signup" class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800 sm:mt-0 sm:ml-2" :class="{'bg-teal-800': (activeRoute == 'Signup')}">Signup</router-link>
+      <router-link v-if="isLoggedIn" to="/search" class="block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800" :class="{'bg-teal-800': (activeRoute == 'Search')}">Search</router-link>
+      <router-link v-if="isLoggedIn" to="/mymovies" class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800 sm:mt-0 sm:ml-2">My Watch List</router-link>
+      <!-- <router-link v-to="/watched" class="mt-1 block px-2 py-1 text-white font-semibold rounded hover:bg-teal-800 sm:mt-0 sm:ml-2">Watched Movies</router-link> -->
     </nav>
   </header>
 </template>
 
 <script>
+import store from "../store.js";
 export default {
   data() {
     return {
-      isOpen: false,
+      isOpen: false
     }
   },
   computed: {
 		activeRoute() {
 			return this.$route.name;
-		}
+		},
+    isLoggedIn() {
+      return store.isLoggedIn;
+    }
 	},
 }
 </script>

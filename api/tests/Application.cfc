@@ -20,7 +20,15 @@ component{
 	this.mappings["/root"]   = rootPath;
 	this.mappings["/models"]   = rootPath & "/models";
 	this.mappings[ "/quick" ] = rootPath & "/modules/quick";
-	this.mappings[ "/cfmigrations" ] = rootPath & "/modules/cfmigrations";
+	this.mappings[ "/cfmigrations" ] = rootPath & "/modules/cfmigrations";	
+	
+	this.javaSettings = { 
+		loadPaths = [ 
+			"lib", 
+			"lib\nbvcxz"
+		], 
+		reloadOnChange = false 
+	};
 
 	this.datasources["MyMovies"] = {
 		class: server.system.environment.DB_CLASS

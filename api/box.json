@@ -17,7 +17,8 @@
         "testbox":"^4.0.0",
         "commandbox-dotenv":"*",
         "commandbox-cfconfig":"*",
-        "commandbox-cfformat":"*"
+        "commandbox-cfformat":"*",
+        "commandbox-migrations":"*"
     },
     "installPaths":{
         "coldbox":"coldbox/",
@@ -25,14 +26,20 @@
         "mementifier":"modules/mementifier/",
         "cbvalidation":"modules/cbvalidation/",
         "cfmigrations":"modules/cfmigrations/",
-        "quick":"modules/quick/"
+        "quick":"modules/quick/",
+        "BCrypt":"modules/BCrypt/",
+        "cf-jwt-simple":"lib/jwt/",
+        "nbvcxz-1.5.0":"lib/nbvcxz/"
     },
     "dependencies":{
         "coldbox":"^6.0.0",
         "mementifier":"^2.1.0+100",
         "cbvalidation":"^2.1.0+126",
         "quick":"^4.2.4",
-        "cfmigrations":"^3.0.4"
+        "cfmigrations":"^3.0.4",
+        "BCrypt":"^3.0.1+34",
+        "nbvcxz-1.5.0":"jar:https://github.com/GoSimpleLLC/nbvcxz/releases/download/1.5.0/nbvcxz-1.5.0.jar",
+        "cf-jwt-simple": "1.3.0"
     },
     "scripts":{},
     "cfmigrations":{

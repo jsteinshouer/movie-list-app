@@ -25,9 +25,14 @@ services:
             - DB_USER_FILE=/run/secrets/DB_USER
             - DB_PASSWORD_FILE=/run/secrets/DB_PASSWORD
             - OMDB_API_KEY=${OMDB_API_KEY}
+            - JWT_SECRET_FILE=/run/secrets/JWT_SECRET
+            - JWT_ISSUER=${JWT_ISSUER}
+            - JWT_EXP_MIN=${JWT_EXP_MIN}
+            - AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME}
         secrets:
             - DB_PASSWORD
             - DB_USER
+            - JWT_SECRET
 
     db:
         image: mysql:latest
@@ -48,17 +53,18 @@ services:
         build:
             context: .
             target: app-dev
-        volumes:
-        - .:/workspace:cached
-        - ./app:/workspace/app
-        - /workspace/app/node_modules
         container_name: movie-app
+        volumes:
+            - .:/workspace:cached
+            - ./app:/workspace/app
+            - /workspace/app/node_modules
         ports:
             - 3000:3000
         links:
             - api
         environment:
-            CHOKIDAR_USEPOLLING: 'true'
+            - CHOKIDAR_USEPOLLING='true'
+            - CYPRESS_AUTH_COOKIE_NAME=${AUTH_COOKIE_NAME}
 
 secrets:
   DB_USER:
@@ -67,3 +73,5 @@ secrets:
     file: ./secrets/MYSQL_PASSWORD
   DB_ROOT_PASSWORD:
     file: ./secrets/MYSQL_ROOT_PASSWORD
+  JWT_SECRET:
+    file: ./secrets/JWT_SECRET
