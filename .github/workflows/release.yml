@@ -36,18 +36,13 @@ jobs:
       -
         name: Get version
         id: get_version
-        run: |
-          VERSION="latest"
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF#refs/tags/v}
-          fi
-          echo '::set-output name=version::${VERSION}'
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/v}
       -
         name: Get image tags
         id: image_tags
         run: |
-          TAGS="${{ secrets.DOCKERHUB_IMAGE }}::${{ steps.get_version.outputs.version }},${{ secrets.DOCKERHUB_IMAGE }}:latest"
-          echo '::set-output name=tags::${TAGS}'
+          TAGS="${{ secrets.DOCKERHUB_IMAGE }}:${{ steps.get_version.outputs.version }},${{ secrets.DOCKERHUB_IMAGE }}:latest"
+          echo ::set-output name=tags::${TAGS}
       
       - 
         name: Login to DockerHub
