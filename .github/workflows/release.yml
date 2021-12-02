@@ -43,6 +43,8 @@ jobs:
             VERSION=${GITHUB_REF#refs/tags/v}
             TAGS="${{ secrets.DOCKERHUB_IMAGE }}:${VERSION},$TAGS"
           fi
+          echo ::set-output name=tags::${TAGS}
+          echo ::set-output name=version::${VERSION}
       
       - 
         name: Login to DockerHub
