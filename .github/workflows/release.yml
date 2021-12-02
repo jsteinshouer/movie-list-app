@@ -1,11 +1,9 @@
 name: Publish release to Dockerhub and trigger a deployment
-# Controls when the workflow will run
+# Build a cross-platform image and deploy on release using a semver tag
 on:
-  # Build a cross-platform image and deploy on release using a semver tag
-  on:
-    push:
-      tags:
-        - "v*.*.*"
+  push:
+    tags:
+      - "v*.*.*"
 
 jobs:
     build-push:
