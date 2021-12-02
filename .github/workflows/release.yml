@@ -34,16 +34,20 @@ jobs:
             ${{ runner.os }}-build-cache
 
       -
-        name: Get image tags
-        id: image_tags
+        name: Get version
+        id: get_version
         run: |
-          TAGS="${{ secrets.DOCKERHUB_IMAGE }}:latest"
           VERSION="latest"
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/v}
-            TAGS="${{ secrets.DOCKERHUB_IMAGE }}:${VERSION},$TAGS"
           fi
-          echo '::set-output name=version::${VERSION},name=tags::${TAGS}'
+          echo '::set-output name=version::${VERSION}'
+      -
+        name: Get image tags
+        id: image_tags
+        run: |
+          TAGS="${{ secrets.DOCKERHUB_IMAGE }}::${{ steps.get_version.outputs.version }},${{ secrets.DOCKERHUB_IMAGE }}:latest"
+          echo '::set-output name=tags::${TAGS}'
       
       - 
         name: Login to DockerHub
@@ -99,4 +103,4 @@ jobs:
             SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
 
         - name: Trigger a service update
-          run: ssh prod 'docker service update --image ${{ secrets.DOCKERHUB_IMAGE }}:${{ steps.image_tags.outputs.version }} movie-app'
+          run: ssh prod 'docker service update --image ${{ secrets.DOCKERHUB_IMAGE }}:${{ steps.get_version.outputs.version }} movie-app'
