@@ -74,7 +74,7 @@ jobs:
           target: prod
           builder: ${{ steps.buildx.outputs.name }}
           cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,src=/tmp/.buildx-cache-new
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
           # don't push, only build
           load: true
           tags: ${{ secrets.DOCKERHUB_IMAGE }}:latest
