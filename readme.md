@@ -10,7 +10,7 @@ For development generate the secrets that docker-compose will use to to pass dat
 mkdir secrets
 openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_ROOT_PASSWORD
 openssl rand 20 | base64 -w 0 > ./secrets/MYSQL_PASSWORD
-openssl rand 32 | base64 -w 0 | docker secret create JWT_SECRET -
+openssl rand 32 | base64 -w 0 > ./secrets/JWT_SECRET -
 echo "mydbuser" > ./secrets/MYSQL_USER
 ```
 
