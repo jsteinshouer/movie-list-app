@@ -12,6 +12,7 @@ services:
             - .:/workspace:cached
             - ./api:/app
             - /app/modules
+            - /app/lib
             - /app/coldbox
             - /app/testbox
         environment:
