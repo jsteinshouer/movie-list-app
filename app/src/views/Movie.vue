@@ -7,7 +7,7 @@
 			</div>
 			<div class="col-start-2 sm:mt-6">
 				<h1 class="title text-4xl leading-8 font-extrabold text-gray-900 dark:text-white tracking-tight sm:leading-9 mb-6">{{movie.Title}}</h1>
-				
+
 				<div class="bg-white max-w-2xl shadow overflow-hidden sm:rounded-lg mr-4">
 					<div class="border-t border-gray-200">
 						<dl>
@@ -62,7 +62,7 @@ export default {
 	},
 	mounted() {
 		let vm = this;
-		
+
 		this.axios.get( "/api/movie/" + this.imdbID )
 			.then((response) => {
 				vm.movie = response.data.data;
@@ -106,7 +106,16 @@ export default {
 				});
 		},
 		removeFromMovieList() {
-			console.log("not implemented")
+			let vm = this;
+			vm.toggleButtonText = "REMOVING...";
+			this.axios.delete( "/api/mymovies/" + this.myMovieID )
+				.then(() => {
+					vm.myMovieID = 0;
+					vm.toggleButtonText = "ADD TO MY LIST";
+				})
+				.catch( (error) => {
+					console.log( error );
+				});
 		}
 	}
 }
