@@ -36,23 +36,19 @@ RUN apt-get update && \
 
 RUN sudo -u node npm install -g npm@latest
 
-# Install global packages
-RUN sudo -u node npm install -g @vue/cli @vue/cli-service-global
-
 FROM app-devcontainer as app-dev
 WORKDIR /workspace/app
-# ENV PATH /app/node_modules/.bin:$PATH
-COPY app/package*.json ./
+ENV PATH /workspace/app/node_modules/.bin:$PATH
+COPY app/package.json ./
 RUN sudo npm install
 EXPOSE 3000
-CMD ["npm", "run", "serve"]
+CMD ["npm", "run", "dev"]
 
 
 
 # production build stage
 FROM node:14.18.0-alpine as app-prod
 RUN npm install -g npm@latest
-#RUN npm install -g @vue/cli @vue/cli-service-global
 ENV PATH /app/node_modules/.bin:$PATH
 WORKDIR /app
 COPY ./app .

@@ -1,6 +1,6 @@
-import Vue from 'vue';
+import { reactive } from 'vue';
 
-export default Vue.observable({
+export default reactive({
     isLoggedIn: false,
     watchlist: []
 });

@@ -1,5 +1,6 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+
+import { createRouter, createWebHistory } from 'vue-router'
+import axios from "axios";
 import store from '../store.js';
 import Login from '../views/Login.vue'
 import Signup from '../views/Signup.vue'
@@ -9,57 +10,55 @@ import Search from '../views/Search.vue'
 import MyMovies from '../views/MyMovies.vue'
 import Movie from '../views/Movie.vue'
 
-Vue.use(VueRouter)
-
-  const routes = [
+const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home,
-    meta: { requiredAuth: true } 
+    meta: { requiredAuth: true }
   },
   {
     path: '/login',
     name: 'Login',
     component: Login,
-    meta: { requiredAuth: false } 
+    meta: { requiredAuth: false }
   },
   {
     path: '/signup',
     name: 'Signup',
     component: Signup,
-    meta: { requiredAuth: false } 
+    meta: { requiredAuth: false }
   },
   {
     path: '/signup/confirm',
     name: 'SignupConfirmation',
     component: SignupConfirmation,
-    meta: { requiredAuth: false } 
+    meta: { requiredAuth: false }
   },
   {
     path: '/search',
     name: 'Search',
     component: Search,
-    meta: { requiredAuth: true } 
+    meta: { requiredAuth: true }
   },
   {
     path: '/mymovies',
     name: 'MyMovies',
     component: MyMovies,
-    meta: { requiredAuth: true } 
+    meta: { requiredAuth: true }
   },
   {
     path: '/view/:imdbID',
     name: 'ViewMovie',
     component: Movie,
-    meta: { requiredAuth: true } 
+    meta: { requiredAuth: true }
   }
 ]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+const router = createRouter({
+	// 4. Provide the history implementation to use. We are using the hash history for simplicity here.
+	history: createWebHistory(),
+	routes, // short for `routes: routes`
 })
 
 router.beforeEach(async (to, from, next) => {
@@ -67,7 +66,7 @@ router.beforeEach(async (to, from, next) => {
     var isLoggedIn = store.isLoggedIn;
     if (!isLoggedIn) {
       // Check with server to be sure
-      Vue.axios.get( "/api/whoami" )
+      axios.get( "/api/whoami" )
         .then((response) => {
           if ( response.status == 200 ) {
             store.isLoggedIn = true;

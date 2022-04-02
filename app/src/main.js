@@ -1,12 +1,13 @@
-import Vue from 'vue'
-import './plugins/axios'
-import App from './App.vue'
-import router from './router'
-import './assets/tailwind.css';
+import { createApp } from 'vue'
+import axios from '@/plugins/axios'
+import App from '@/App.vue'
+import router from '@/router'
+import '@/assets/tailwind.css';
 
-Vue.config.productionTip = false
+const app = createApp(App)
+// Make sure to _use_ the router instance to make the
+// whole app router-aware.
+app.use(router)
+app.use(axios)
 
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+app.mount('#app')

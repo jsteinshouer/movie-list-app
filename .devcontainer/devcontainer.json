@@ -9,7 +9,7 @@
 		"terminal.integrated.shell.linux": "/bin/zsh"
 	},
 
-	"postCreateCommand": "cd app && sudo npm install",
+	//"postCreateCommand": "cd app && sudo npm install",
 	// "remoteUser": "node",
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -19,7 +19,7 @@
 		"ortus-solutions.vscode-coldbox",
 		"ortus-solutions.vscode-testbox",
         "dbaeumer.vscode-eslint",
-		"octref.vetur",
+		"johnsoncodehk.volar",
 		"bradlc.vscode-tailwindcss"
 	]
 
