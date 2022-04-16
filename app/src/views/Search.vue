@@ -19,9 +19,9 @@
 </template>
 
 <script>
-import List from '@/components/List';
-import ListItem from '@/components/ListItem';
-import ListLoader from '@/components/ListLoader';
+import List from '@/components/List.vue';
+import ListItem from '@/components/ListItem.vue';
+import ListLoader from '@/components/ListLoader.vue';
 export default {
 	name: 'Search',
 	data() {
@@ -37,7 +37,7 @@ export default {
 		ListLoader
 	},
 	mounted() {
-		
+
 	},
 	computed: {
 		movies() {
@@ -48,7 +48,7 @@ export default {
 		search() {
 			let vm = this;
 			this.loading = true;
-			
+
 			this.axios.get( "/api/search?keyword=" + vm.keyword ).then((response) => {
 				vm.searchResults = response.data.data;
 				this.loading = false;

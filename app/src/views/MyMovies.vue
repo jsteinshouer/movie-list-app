@@ -10,9 +10,9 @@
 </template>
 
 <script>
-import List from '@/components/List';
-import ListItem from '@/components/ListItem';
-import ListLoader from '@/components/ListLoader';
+import List from '@/components/List.vue';
+import ListItem from '@/components/ListItem.vue';
+import ListLoader from '@/components/ListLoader.vue';
 export default {
 	name: 'MyMovies',
 	data() {
@@ -36,7 +36,7 @@ export default {
 		loadMovies() {
 			let vm = this;
 			this.loading = true;
-			
+
 			this.axios.get( "/api/mymovies" ).then((response) => {
 				vm.mymovies = response.data.data;
 				this.loading = false;
